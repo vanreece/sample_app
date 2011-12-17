@@ -119,6 +119,13 @@ describe UsersController do
       get :new
       response.should have_selector("input[name='user[password_confirmation]'][type='password']")
     end
+
+    it "should redirect to the root url if a user is singed in" do
+      user = Factory(:user)
+      test_sign_in(user)
+      get :new
+      response.should redirect_to(root_url)
+    end
   end
 
   describe "POST 'create'" do
@@ -174,7 +181,14 @@ describe UsersController do
         post :create, :user => @attr
         flash[:success].should =~ /welcome to the sample app/i
       end
+      it "should redirect to the root url if a user is singed in" do
+        user = Factory(:user)
+        test_sign_in(user)
+        post :create, :user => @attr
+        response.should redirect_to(root_url)
+      end
     end
+
   end
 
   describe "GET 'edit'" do
