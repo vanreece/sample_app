@@ -53,6 +53,18 @@ describe UsersController do
         response.should have_selector("a", :href => "/users?page=2",
                                       :content => "Next")
       end
+
+      it "should not have delete links for non-admins" do
+        get :index
+        response.should_not have_selector("a", href: "/users/1", content: "delete")
+      end
+
+      it "should have delete links for admins" do
+        admin = Factory(:user, :email => "admin@example.com", :admin => true)
+        test_sign_in(admin)
+        get :index
+        response.should have_selector("a", href: "/users/1", content: "delete")
+      end
     end
   end
 
